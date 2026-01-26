@@ -85,5 +85,28 @@ class SkrybeSDK {
         const response = await this.client.post("/api/lists/get-lists.php", formData);
         return response.data;
     }
+    async sendTransactional(options) {
+        const payload = {
+            api_key: this.apiKey,
+            to_email: options.toEmail,
+            subject: options.subject,
+        };
+        if (options.htmlBody)
+            payload.html_body = options.htmlBody;
+        if (options.plainBody)
+            payload.plain_body = options.plainBody;
+        if (options.fromName)
+            payload.from_name = options.fromName;
+        if (options.fromEmail)
+            payload.from_email = options.fromEmail;
+        if (options.replyTo)
+            payload.reply_to = options.replyTo;
+        const response = await this.client.post("/api/emails/send-transactional.php", payload, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        return response.data;
+    }
 }
 exports.SkrybeSDK = SkrybeSDK;

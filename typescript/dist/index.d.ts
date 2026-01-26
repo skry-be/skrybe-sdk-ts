@@ -41,6 +41,21 @@ export interface List {
     id: string;
     name: string;
 }
+export interface SendTransactionalOptions {
+    toEmail: string;
+    subject: string;
+    htmlBody?: string;
+    plainBody?: string;
+    fromName?: string;
+    fromEmail?: string;
+    replyTo?: string;
+}
+export interface SendTransactionalResponse {
+    status: "success" | "error";
+    message: string;
+    error_info?: string;
+    code?: number;
+}
 export declare class SkrybeSDK {
     private client;
     private apiKey;
@@ -49,4 +64,5 @@ export declare class SkrybeSDK {
     sendEmail(options: SendEmailOptions): Promise<string>;
     createCampaign(options: CreateCampaignOptions): Promise<string>;
     getLists(includeHidden?: boolean): Promise<List[]>;
+    sendTransactional(options: SendTransactionalOptions): Promise<SendTransactionalResponse>;
 }
