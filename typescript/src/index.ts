@@ -47,6 +47,23 @@ export interface List {
   name: string;
 }
 
+export interface SendTransactionalOptions {
+  toEmail: string;
+  subject: string;
+  htmlBody?: string;
+  plainBody?: string;
+  fromName?: string;
+  fromEmail?: string;
+  replyTo?: string;
+}
+
+export interface SendTransactionalResponse {
+  status: "success" | "error";
+  message: string;
+  error_info?: string;
+  code?: number;
+}
+
 export class SkrybeSDK {
   private client: AxiosInstance;
   private apiKey: string;
@@ -140,6 +157,33 @@ export class SkrybeSDK {
     const response = await this.client.post(
       "/api/lists/get-lists.php",
       formData
+    );
+    return response.data;
+  }
+
+  async sendTransactional(
+    options: SendTransactionalOptions
+  ): Promise<SendTransactionalResponse> {
+    const payload: Record<string, string> = {
+      api_key: this.apiKey,
+      to_email: options.toEmail,
+      subject: options.subject,
+    };
+
+    if (options.htmlBody) payload.html_body = options.htmlBody;
+    if (options.plainBody) payload.plain_body = options.plainBody;
+    if (options.fromName) payload.from_name = options.fromName;
+    if (options.fromEmail) payload.from_email = options.fromEmail;
+    if (options.replyTo) payload.reply_to = options.replyTo;
+
+    const response = await this.client.post(
+      "/api/emails/send-transactional.php",
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
     return response.data;
   }
