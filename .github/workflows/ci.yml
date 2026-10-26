@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: typescript
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Supported LTS lines; package.json engines allows >=18 for fetch.
+        node-version: ['20', '22', '24']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: typescript/package-lock.json
+      - run: npm ci
+      # A version bump without changelog notes would fail the release after
+      # merge; catch it on the PR instead. See scripts/release.mjs.
+      - name: CHANGELOG.md has notes for this version
+        run: node scripts/release.mjs check
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+      # Proves the published artifact installs and loads both ways, which a
+      # plain build does not: it catches a bad `files` list or exports map.
+      - name: Install the packed tarball and load it
+        run: |
+          npm pack --pack-destination "$RUNNER_TEMP"
+          cd "$RUNNER_TEMP"
+          npm init -y >/dev/null
+          npm install ./skrybe-sdk-*.tgz
+          node -e "const { Skrybe } = require('@skrybe/sdk'); new Skrybe({ apiKey: 'k' })"
+          node --input-type=module -e "import { Skrybe } from '@skrybe/sdk'; new Skrybe({ apiKey: 'k' })"
