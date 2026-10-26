@@ -66,10 +66,5 @@ export type {
   CreateAutoresponderEmailParams,
 } from './resources/autoresponders.js'
 export {
-  SMS_TYPES,
   type Brand,
-  type SmsType,
-  type SendSmsParams,
-  type SendSmsResult,
-  type SmsMessage,
 } from './resources/misc.js'

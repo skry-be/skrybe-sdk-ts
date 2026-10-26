@@ -10,8 +10,6 @@ export interface SubscriberRef {
 
 export interface SubscribeParams extends SubscriberRef {
   name?: string
-  /** Mobile number for SMS. The server ignores one it cannot read, rather than failing the signup. */
-  phone?: string
   /** Two-letter ISO 3166-1 code, e.g. NG. */
   country?: string
   ipAddress?: string
@@ -35,12 +33,7 @@ export const SUBSCRIBER_STATUSES = ['active', 'unconfirmed', 'unsubscribed', 'bo
 export type SubscriberStatus = (typeof SUBSCRIBER_STATUSES)[number]
 
 export interface Subscriber {
-  /** null for a contact that only has a phone number. */
-  email: string | null
-  /** E.164, e.g. +2348031234567. */
-  phone: string | null
-  /** Opted out of SMS; email is unaffected. */
-  sms_opt_out: boolean
+  email: string
   name: string
   status: SubscriberStatus
   /** Unix seconds. */
@@ -87,7 +80,6 @@ export class Subscribers {
     // Switches subscribe.php from rendering an HTML page to answering in plain text.
     body.boolean = 'true'
     if (params.name !== undefined) body.name = params.name
-    if (params.phone !== undefined) body.phone = params.phone
     if (params.country !== undefined) body.country = params.country
     if (params.ipAddress !== undefined) body.ipaddress = params.ipAddress
     if (params.referrer !== undefined) body.referrer = params.referrer

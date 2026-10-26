@@ -16,7 +16,7 @@ A rewrite covering the whole public API, in step with `@skrybe/cli` 0.2.0. See
 
 ### Added
 - Resource namespaces on a `Skrybe` client: `emails`, `campaigns`, `lists`,
-  `subscribers`, `templates`, `autoresponders`, `brands`, `sms`, `stats`.
+  `subscribers`, `templates`, `autoresponders`, `brands`, `stats`.
 - Campaigns: `list`/`listAll`, `get`, `stats`, `send` (with `dryRun`),
   `testSend`, `schedule`/`unschedule`, `update`, `duplicate`, `delete`,
   `activity`/`activityAll`.
@@ -26,7 +26,6 @@ A rewrite covering the whole public API, in step with `@skrybe/cli` 0.2.0. See
   `status`, `list`/`listAll`.
 - Templates: `list`, `get`, `create`, `update`, `delete`.
 - Autoresponders: `list`, `get`, `emailStats`, `create`, `createEmail`.
-- SMS: `send` and `get`.
 - `brands.list()` and `stats.totalEmailsSent()`.
 - Typed errors: `SkrybeError` with `AuthenticationError`, `InvalidRequestError`,
   `RateLimitError`, `ConnectionError` and `ApiError`, each with a stable `code`.

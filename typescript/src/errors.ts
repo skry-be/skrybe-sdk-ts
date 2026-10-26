@@ -336,32 +336,6 @@ const PROSE_ERRORS: Record<string, ProseRule> = {
     hint: 'The list has reCAPTCHA enabled on its subscribe form, which an API call cannot satisfy.',
   },
 
-  // SMS
-  'phone number not passed': { code: 'phone_missing', type: 'invalid_request' },
-  'message not passed': { code: 'message_missing', type: 'invalid_request' },
-  'invalid phone number': {
-    code: 'invalid_phone',
-    type: 'invalid_request',
-    hint: 'Use a Nigerian mobile number, e.g. 0803 123 4567 or +2348031234567.',
-  },
-  'use a brand api key': {
-    code: 'brand_key_required',
-    type: 'invalid_request',
-    hint: 'SMS is charged to a brand. Use an API key from a brand login, not the main account key.',
-  },
-  'sms is not enabled for this brand': {
-    code: 'sms_not_enabled',
-    type: 'api',
-    hint: "An admin sets the brand's SMS allowance under brand settings, SMS.",
-  },
-  'monthly sms allowance exceeded': {
-    code: 'quota_exceeded',
-    type: 'rate_limit',
-    hint: 'The allowance resets on the 1st of the month, Lagos time.',
-  },
-  'message id not passed': { code: 'message_id_missing', type: 'invalid_request' },
-  'message does not exist': { code: 'message_not_found', type: 'api' },
-
   // Sending
   'unauthorised from email domain': {
     code: 'unauthorised_from_domain',
@@ -376,14 +350,6 @@ const PROSE_PATTERN_ERRORS: [RegExp, ProseRule][] = [
   [/^account under review:/, { code: 'account_under_review', type: 'api', hint: UNDER_REVIEW_HINT }],
   [/^brand is under review/, { code: 'account_under_review', type: 'api', hint: UNDER_REVIEW_HINT }],
   [/^a field is too long/, { code: 'field_too_long', type: 'invalid_request' }],
-  [
-    /^message is longer than \d+ sms segments/,
-    {
-      code: 'message_too_long',
-      type: 'invalid_request',
-      hint: 'A segment is 160 characters, or 70 with emoji or special characters.',
-    },
-  ],
   [
     /^test send rate limit reached/,
     {

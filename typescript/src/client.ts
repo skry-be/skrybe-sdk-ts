@@ -3,7 +3,7 @@ import { Autoresponders } from './resources/autoresponders.js'
 import { Campaigns } from './resources/campaigns.js'
 import { Emails } from './resources/emails.js'
 import { Lists } from './resources/lists.js'
-import { Brands, Sms, Stats } from './resources/misc.js'
+import { Brands, Stats } from './resources/misc.js'
 import { Subscribers } from './resources/subscribers.js'
 import { Templates } from './resources/templates.js'
 import { Transport, type FetchLike } from './transport.js'
@@ -39,7 +39,6 @@ export class Skrybe {
   readonly templates: Templates
   readonly autoresponders: Autoresponders
   readonly brands: Brands
-  readonly sms: Sms
   readonly stats: Stats
 
   constructor(options: SkrybeOptions) {
@@ -71,7 +70,6 @@ export class Skrybe {
     this.templates = new Templates(transport)
     this.autoresponders = new Autoresponders(transport)
     this.brands = new Brands(transport)
-    this.sms = new Sms(transport)
     this.stats = new Stats(transport)
   }
 }

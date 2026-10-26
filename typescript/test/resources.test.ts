@@ -306,16 +306,10 @@ describe('autoresponders', () => {
   })
 })
 
-describe('brands, sms and stats', () => {
+describe('brands and stats', () => {
   it('brands.list reads the numbered payload', async () => {
     const { skrybe } = await setup([{ body: phpNumberedPayload('brand', [{ id: '86', name: 'Cafe One' }]) }])
     assert.deepEqual(await skrybe.brands.list(), [{ id: '86', name: 'Cafe One' }])
-  })
-
-  it('sms.send posts to, message and type', async () => {
-    const { stub, skrybe } = await setup([{ body: '{"id":1,"to":"+2348031234567","status":"sent","segments":1}' }])
-    await skrybe.sms.send({ to: '0803 123 4567', message: 'Your code is 1234', type: 'transactional' })
-    assert.deepEqual(sent(stub), { to: '0803 123 4567', message: 'Your code is 1234', type: 'transactional' })
   })
 
   it('stats.totalEmailsSent is a GET without the api key', async () => {

@@ -1,8 +1,8 @@
 # @skrybe/sdk
 
 The official TypeScript/JavaScript SDK for the [Skrybe](https://skry.be) API:
-email campaigns, transactional email, lists, subscribers, templates,
-autoresponders and SMS.
+email campaigns, transactional email, lists, subscribers, templates and
+autoresponders.
 
 - **No dependencies.** It uses the built-in `fetch`, so installing it pulls in
   nothing but this package.
@@ -147,15 +147,6 @@ await skrybe.autoresponders.create({ name: 'Birthdays', type: 'annually', listId
 ```
 
 Also `list`, `get` (with its emails) and `emailStats`.
-
-### SMS
-
-```ts
-const sms = await skrybe.sms.send({ to: '0803 123 4567', message: 'Your code is 1234', type: 'transactional' })
-const latest = await skrybe.sms.get(sms.id)
-```
-
-Charged to the brand's monthly SMS allowance. An admin enables SMS for a brand.
 
 ### Brands and stats
 
