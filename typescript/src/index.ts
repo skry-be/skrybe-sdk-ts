@@ -1,190 +1,75 @@
-import axios, { AxiosInstance } from "axios";
+export { Skrybe, DEFAULT_BASE_URL, type SkrybeOptions } from './client.js'
+export {
+  SkrybeError,
+  AuthenticationError,
+  InvalidRequestError,
+  RateLimitError,
+  ConnectionError,
+  ApiError,
+  type SkrybeErrorType,
+} from './errors.js'
+export type { FetchLike } from './transport.js'
+export { VERSION } from './version.js'
 
-export interface SkrybeConfig {
-  apiKey: string;
-  baseURL?: string;
-}
-
-export interface SendEmailOptions {
-  fromName: string;
-  fromEmail: string;
-  replyTo: string;
-  subject: string;
-  htmlText: string;
-  plainText?: string;
-  to?: string[];
-  recipientVariables?: Record<string, Record<string, any>>;
-  listIds?: string[];
-  queryString?: string;
-  trackOpens?: 0 | 1 | 2;
-  trackClicks?: 0 | 1 | 2;
-  scheduleDateTime?: string;
-  scheduleTimezone?: string;
-}
-
-export interface CreateCampaignOptions {
-  fromName: string;
-  fromEmail: string;
-  replyTo: string;
-  title: string;
-  subject: string;
-  htmlText: string;
-  plainText?: string;
-  listIds?: string;
-  segmentIds?: string;
-  excludeListIds?: string;
-  excludeSegmentIds?: string;
-  queryString?: string;
-  trackOpens?: 0 | 1 | 2;
-  trackClicks?: 0 | 1 | 2;
-  sendCampaign?: 0 | 1;
-  scheduleDateTime?: string;
-  scheduleTimezone?: string;
-}
-
-export interface List {
-  id: string;
-  name: string;
-}
-
-export interface SendTransactionalOptions {
-  toEmail: string;
-  subject: string;
-  htmlBody?: string;
-  plainBody?: string;
-  fromName?: string;
-  fromEmail?: string;
-  replyTo?: string;
-}
-
-export interface SendTransactionalResponse {
-  status: "success" | "error";
-  message: string;
-  error_info?: string;
-  code?: number;
-}
-
-export class SkrybeSDK {
-  private client: AxiosInstance;
-  private apiKey: string;
-
-  constructor(config: SkrybeConfig) {
-    this.apiKey = config.apiKey;
-    this.client = axios.create({
-      baseURL: config.baseURL || "https://dashboard.skry.be",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    });
-  }
-
-  private createFormData(data: Record<string, any>): URLSearchParams {
-    const formData = new URLSearchParams();
-    formData.append("api_key", this.apiKey);
-
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined) {
-        if (Array.isArray(value)) {
-          formData.append(key, JSON.stringify(value));
-        } else if (typeof value === "object") {
-          formData.append(key, JSON.stringify(value));
-        } else {
-          formData.append(key, String(value));
-        }
-      }
-    });
-
-    return formData;
-  }
-
-  async sendEmail(options: SendEmailOptions): Promise<string> {
-    const formData = this.createFormData({
-      from_name: options.fromName,
-      from_email: options.fromEmail,
-      reply_to: options.replyTo,
-      subject: options.subject,
-      html_text: options.htmlText,
-      plain_text: options.plainText,
-      to: options.to,
-      "recipient-variables": options.recipientVariables,
-      list_ids: options.listIds?.join(","),
-      query_string: options.queryString,
-      track_opens: options.trackOpens,
-      track_clicks: options.trackClicks,
-      schedule_date_time: options.scheduleDateTime,
-      schedule_timezone: options.scheduleTimezone,
-    });
-
-    console.log(formData);
-
-    const response = await this.client.post("/api/emails/send.php", formData);
-    return response.data;
-  }
-
-  async createCampaign(options: CreateCampaignOptions): Promise<string> {
-    const formData = this.createFormData({
-      from_name: options.fromName,
-      from_email: options.fromEmail,
-      reply_to: options.replyTo,
-      title: options.title,
-      subject: options.subject,
-      html_text: options.htmlText,
-      plain_text: options.plainText,
-      list_ids: options.listIds,
-      segment_ids: options.segmentIds,
-      exclude_list_ids: options.excludeListIds,
-      exclude_segments_ids: options.excludeSegmentIds,
-      query_string: options.queryString,
-      track_opens: options.trackOpens,
-      track_clicks: options.trackClicks,
-      send_campaign: options.sendCampaign,
-      schedule_date_time: options.scheduleDateTime,
-      schedule_timezone: options.scheduleTimezone,
-    });
-
-    const response = await this.client.post(
-      "/api/campaigns/create.php",
-      formData
-    );
-    return response.data;
-  }
-
-  async getLists(includeHidden: boolean = false): Promise<List[]> {
-    const formData = this.createFormData({
-      include_hidden: includeHidden ? "yes" : "no",
-    });
-
-    const response = await this.client.post(
-      "/api/lists/get-lists.php",
-      formData
-    );
-    return response.data;
-  }
-
-  async sendTransactional(
-    options: SendTransactionalOptions
-  ): Promise<SendTransactionalResponse> {
-    const payload: Record<string, string> = {
-      api_key: this.apiKey,
-      to_email: options.toEmail,
-      subject: options.subject,
-    };
-
-    if (options.htmlBody) payload.html_body = options.htmlBody;
-    if (options.plainBody) payload.plain_body = options.plainBody;
-    if (options.fromName) payload.from_name = options.fromName;
-    if (options.fromEmail) payload.from_email = options.fromEmail;
-    if (options.replyTo) payload.reply_to = options.replyTo;
-
-    const response = await this.client.post(
-      "/api/emails/send-transactional.php",
-      payload,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return response.data;
-  }
-}
+export type { Tracking, EngagementStats } from './resources/shared.js'
+export {
+  MAX_RECIPIENTS,
+  type SendEmailParams,
+  type SendEmailResult,
+  type SendTransactionalParams,
+  type SendTransactionalResult,
+} from './resources/emails.js'
+export {
+  CAMPAIGN_STATUSES,
+  ACTIVITY_TYPES,
+  MAX_CAMPAIGNS_PAGE,
+  MAX_ACTIVITY_PAGE,
+  MAX_TEST_EMAILS,
+  type Campaign,
+  type CampaignDetail,
+  type CampaignStatus,
+  type CampaignStats,
+  type CampaignActivity,
+  type CampaignActivityPage,
+  type CampaignActivityParams,
+  type ActivityType,
+  type CreateCampaignParams,
+  type CreateCampaignResult,
+  type ListCampaignsParams,
+  type Recipients,
+  type SendCampaignResult,
+  type ScheduleCampaignParams,
+  type ScheduleCampaignResult,
+  type TestSendResult,
+  type UpdateCampaignParams,
+} from './resources/campaigns.js'
+export type { List, ListDetail, OptIn, CustomField, CustomFieldType } from './resources/lists.js'
+export {
+  SUBSCRIBER_STATUSES,
+  MAX_SUBSCRIBERS_PAGE,
+  type Subscriber,
+  type SubscriberRef,
+  type SubscriberStatus,
+  type SubscribersPage,
+  type SubscribeParams,
+  type SubscribeOutcome,
+  type ListSubscribersParams,
+} from './resources/subscribers.js'
+export type { Template, TemplateEditor, TemplateFields } from './resources/templates.js'
+export type {
+  Autoresponder,
+  AutoresponderType,
+  AutoresponderEmail,
+  AutoresponderWithEmails,
+  AutoresponderEmailStats,
+  CreateAutoresponderParams,
+  CreateAutoresponderEmailParams,
+} from './resources/autoresponders.js'
+export {
+  SMS_TYPES,
+  type Brand,
+  type SmsType,
+  type SendSmsParams,
+  type SendSmsResult,
+  type SmsMessage,
+} from './resources/misc.js'
